@@ -1,0 +1,142 @@
+* {
+    scroll-behavior: smooth;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background: linear-gradient(45deg, #2e1212, #0d0d1d);
+    text-align: center;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+body h1 {
+    font-size: 2rem;
+    margin: 40px 0;
+    color: #fff;
+}
+
+.container {
+    width: 100%;
+    max-width: 1200px;
+    padding: 0 20px;
+    margin: 0 auto;
+}
+
+form {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 20px 0;
+}
+
+form input {
+    width: 100%;
+    max-width: 500px;
+    height: 50px;
+    border: none;
+    outline: none;
+    padding: 0 20px;
+    border-radius: 50px 0 0 50px;
+    font-size: 1rem;
+}
+
+form button {
+    height: 50px;
+    border: none;
+    outline: none;
+    background-color: #ff0000;
+    color: #fff;
+    padding: 0 20px;
+    border-radius: 0 50px 50px 0;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+form button:hover {
+    background-color: #ff3333;
+}
+
+@media screen and (max-width: 768px) {
+    form input {
+        max-width: 300px;
+    }
+}
+
+.output {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+}
+
+.output a {
+    text-decoration: none;
+    color: #000;
+    font-size: 1.5rem;
+    margin: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    transition: all 0.2s ease;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.507);
+}
+
+.output a:hover {
+    background-color: #ff0000;
+    color: #fff;
+}
+
+.output .card {
+    width: 100%;
+    max-width: 500px;
+    margin: 20px;
+    background-color: #fff;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    transition: all 0.2s ease;
+    padding: 20px;
+}
+
+#videoThumbnail{
+    width: 100%;
+    max-width: 300px;
+    height: auto;
+    border-radius: 10px;
+}
+
+#videoThumbnail:hover{
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.507);
+}
+
+.message {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+}
+
+.message p {
+    font-size: 1.5rem;
+    color: #fff;
+}

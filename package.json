@@ -10,7 +10,7 @@
   "scripts": {
     "start": "node server.js",
     "dev": "nodemon server.js",
-    "vercel-start": "node server.js"
+    "vercel-build": "echo Building..."
   },
   "name": "youtubedowloader",
   "version": "1.0.0",

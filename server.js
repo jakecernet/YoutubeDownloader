@@ -36,7 +36,7 @@ app.get('/download', async (req, res) => {
     // Sanitize the video title for the Content-Disposition header
     const sanitizedTitle = info.videoDetails.title.replace(/[^\w\s.-]/g, ''); // Remove invalid characters
 
-    // Set headers only if the response has not been sent yet
+    // Set headers only if the response has not been sent yet.
     if (!res.headersSent) {
       res.setHeader('Content-Disposition', `attachment; filename="${sanitizedTitle}.${selectedFormat.container}"`);
       res.setHeader('Content-Type', selectedFormat.mimeType);

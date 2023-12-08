@@ -11,7 +11,7 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'client', 'index.html'));
 });
 
-app.get('/download', async (req, res) => {
+app.get('/api/download', async (req, res) => {
   try {
     const { url } = req.query;
 
@@ -58,7 +58,7 @@ app.get('/download', async (req, res) => {
 // Add a separate route for downloading audio
 const ffmpeg = require('fluent-ffmpeg');
 
-app.get('/download/audio', async (req, res) => {
+app.get('/api/download/audio', async (req, res) => {
   try {
     const { url } = req.query;
 

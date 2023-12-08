@@ -18,5 +18,13 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jakecernet/YoutubeDowloader.git"
+  },
+  "bugs": {
+    "url": "https://github.com/jakecernet/YoutubeDowloader/issues"
+  },
+  "homepage": "https://github.com/jakecernet/YoutubeDowloader#readme",
   "description": ""
 }

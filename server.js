@@ -1,4 +1,3 @@
-// server.js
 const express = require('express');
 const path = require('path');
 const ytdl = require('ytdl-core');
@@ -76,7 +75,7 @@ app.get('/download/audio', async (req, res) => {
       return res.status(400).json({ error: 'No available audio formats for the provided URL', message: 'Audio format not available for the provided URL.' });
     }
 
-    // Choose the first audio format
+    // Choose the first format that includes audio only
     const selectedFormat = audioFormats[0];
 
     const audioStream = ytdl(url, { format: selectedFormat });
@@ -84,26 +83,16 @@ app.get('/download/audio', async (req, res) => {
     // Sanitize the video title for the Content-Disposition header
     const sanitizedTitle = info.videoDetails.title.replace(/[^\w\s.-]/g, ''); // Remove invalid characters
 
-    // Set headers only if the response has not been sent yet
-    if (!res.headersSent) {
-      res.setHeader('Content-Disposition', `attachment; filename="${sanitizedTitle}.mp3"`);
-      res.setHeader('Content-Type', 'audio/mpeg'); // Set the content type to audio/mpeg for MP3
-    }
+    // Set headers
+    res.attachment(`${sanitizedTitle}.${selectedFormat.container}`);
+    res.setHeader('Content-Type', selectedFormat.mimeType);
 
-    // Use fluent-ffmpeg to convert the MP4 audio stream to MP3
-    ffmpeg()
-      .input(audioStream)
-      .audioCodec('libmp3lame')
-      .format('mp3')
-      .pipe(res, { end: true });
+    // Pipe the audio stream directly to the response
+    audioStream.pipe(res);
 
-    // Inform the client that the download is successful
-    res.on('finish', () => {
-      // Send a success message if needed
-    });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Internal server error', message: 'Internal server error occurred.', details: error.message });
+    console.error('Error during audio download:', error);
+    res.status(500).json({ error: 'Internal server error', message: 'Internal server error occurred during audio download.', details: error.message });
   }
 });
 

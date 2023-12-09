@@ -56,7 +56,7 @@ document.getElementById('downloadForm').addEventListener('submit', function (eve
             console.error('Error:', error);
 
             // Display error message
-            videoMessageElement.innerHTML = '<p>An error occurred. Please try again.</p>';
+            videoMessageElement.innerHTML = '<p>An error occurred while downloading the video. Please try again.</p>';
 
             // Hide download links and thumbnail in case of an error
             videoLinkElement.style.display = audioLinkElement.style.display = 'none';
@@ -105,7 +105,7 @@ document.getElementById('downloadForm').addEventListener('submit', function (eve
             console.error('Error:', error);
 
             // Display error message
-            audioMessageElement.innerHTML = '<p>An error occurred. Please try again.</p>';
+            audioMessageElement.innerHTML = '<p>An error occurred while downloading the audio. Please try again.</p>';
 
             // Hide download links and thumbnail in case of an error
             videoLinkElement.style.display = audioLinkElement.style.display = 'none';

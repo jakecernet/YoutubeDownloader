@@ -7,13 +7,15 @@ document.getElementById('downloadForm').addEventListener('submit', function (eve
     event.preventDefault();
 
     const urlInput = document.getElementById('urlInput').value;
-    const messageElement = document.getElementById('message');
+    const videoMessageElement = document.getElementById('videoMessage');
+    const audioMessageElement = document.getElementById('audioMessage');
     const videoLinkElement = document.getElementById('videoLink');
     const audioLinkElement = document.getElementById('audioLink');
     const videoThumbnailElement = document.getElementById('videoThumbnail');
 
     //display loading message
-    messageElement.innerHTML = '<p>Loading...</p>';
+    videoMessageElement.innerHTML = '<p>Downloading video...</p>';
+    audioMessageElement.innerHTML = '<p>Downloading audio...</p>';
 
     fetch(`/download?url=${encodeURIComponent(urlInput)}`)
         .then(response => {
@@ -48,13 +50,13 @@ document.getElementById('downloadForm').addEventListener('submit', function (eve
             }
 
             // Display success message
-            messageElement.innerHTML = '<p>Download successful!</p>';
+            videoMessageElement.innerHTML = '<p>Video downloaded successfully.</p>';
         })
         .catch(error => {
             console.error('Error:', error);
 
             // Display error message
-            messageElement.innerHTML = '<p>An error occurred. Please try again.</p>';
+            videoMessageElement.innerHTML = '<p>An error occurred. Please try again.</p>';
 
             // Hide download links and thumbnail in case of an error
             videoLinkElement.style.display = audioLinkElement.style.display = 'none';
@@ -97,13 +99,13 @@ document.getElementById('downloadForm').addEventListener('submit', function (eve
             }
 
             // Display success message
-            messageElement.innerHTML = '<p>Download successful!</p>';
+            audioMessageElement.innerHTML = '<p>Audio downloaded successfully.</p>';
         })
         .catch(error => {
             console.error('Error:', error);
 
             // Display error message
-            messageElement.innerHTML = '<p>An error occurred. Please try again.</p>';
+            audioMessageElement.innerHTML = '<p>An error occurred. Please try again.</p>';
 
             // Hide download links and thumbnail in case of an error
             videoLinkElement.style.display = audioLinkElement.style.display = 'none';

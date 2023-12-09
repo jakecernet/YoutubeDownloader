@@ -5,10 +5,10 @@ const ytdl = require('ytdl-core');
 const app = express();
 const port = process.env.PORT || 3000;
 
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, 'client')));
 
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+  res.sendFile(path.join(__dirname, 'client', 'index.html'));
 });
 
 app.get('/download', async (req, res) => {
@@ -48,6 +48,7 @@ app.get('/download', async (req, res) => {
     // Inform the client that the download is successful
     res.on('finish', () => {
       // Send a success message if needed
+      console.log('Download finished successfully');
     });
   } catch (error) {
     console.error(error);
@@ -89,6 +90,12 @@ app.get('/download/audio', async (req, res) => {
 
     // Pipe the audio stream directly to the response
     audioStream.pipe(res);
+
+    // Inform the client that the download is successful
+    res.on('finish', () => {
+      // Send a success message if needed
+      console.log('Download finished successfully');
+    });
 
   } catch (error) {
     console.error('Error during audio download:', error);

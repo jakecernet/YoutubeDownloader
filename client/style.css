@@ -140,3 +140,19 @@ form button:hover {
     font-size: 1.5rem;
     color: #fff;
 }
+
+footer {
+    bottom: 0;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    position: fixed;
+    margin-bottom: 20px;
+    font-size: 1rem;
+    color: #fff;
+}
+
+footer a {
+    text-decoration: none;
+    color: #969696;
+}

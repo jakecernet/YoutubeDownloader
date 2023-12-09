@@ -18,4 +18,4 @@ You can only download videos that are smaller than 6 MB. That's because of the V
 2. Run the command `npm install` in the root directory.
 3. Run the command `npm run dev` to start the development server.
 4. Open `localhost:3000` in your browser.
-5. Enjoy withou any limitations.
+5. Use like the online version, but you can download bigger videos.

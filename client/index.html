@@ -16,7 +16,10 @@
   <div class="container">
     <form id="downloadForm">
       <input type="text" placeholder="Enter Youtube URL" id="urlInput" />
-      <button type="submit">Download</button>
+      <div class="buttons">
+        <button type="submit" onclick="downloadAudio(event)">Download Audio</button>
+        <button type="submit" onclick="downloadVideo(event)">Download Video</button>
+      </div>
     </form>
     <div class="output">
       <div class="card">
@@ -40,10 +43,11 @@
     <p>
       Made with <span>&hearts;</span> by <a href="https://cernetic.cc">Jaka Černetič</a>
     </p>
-    <p>!!! DISCLAIMER !!!</p>
-    <p>You can only download videos that are less than 6 MB in size due to Vercel's serverless functions limitations.</p>
-    <p>If you try to download a bigger video, you will get an error message.</p>
-    <p>If you want to download bigger videos, go <a href="https://github.com/jakecernet/YoutubeDownloader">here</a> for instructions on how to run this project locally.</p>
+    <p>You can only download videos that are less than 6 MB in size.
+    </p>
+    <p>
+      If you want to download bigger videos, go <a href="https://github.com/jakecernet/YoutubeDownloader">here</a>.
+    </p>
   </footer>
   <script src="index.js"></script>
 </body>

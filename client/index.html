@@ -1,55 +1,61 @@
 <!DOCTYPE html>
 <html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<meta name="theme-color" content="#000000" />
+		<meta
+			name="description"
+			content="Web site created using create-react-app" />
+		<link rel="manifest" href="manifest.json" />
+		<title>Youtube Downloader</title>
+		<link rel="stylesheet" href="style.css" />
+	</head>
 
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="theme-color" content="#000000" />
-  <meta name="description" content="Web site created using create-react-app" />
-  <link rel="manifest" href="manifest.json" />
-  <title>Youtube Downloader</title>
-  <link rel="stylesheet" href="style.css">
-</head>
-
-<body>
-  <h1>Youtube Downloader</h1>
-  <div class="container">
-    <form id="downloadForm">
-      <input type="text" placeholder="Enter Youtube URL" id="urlInput" />
-      <div class="buttons">
-        <button type="submit" onclick="downloadAudio(event)">Download Audio</button>
-        <button type="submit" onclick="downloadVideo(event)">Download Video</button>
-      </div>
-    </form>
-    <div class="output">
-      <div class="card">
-        <img alt="thumbnail" id="videoThumbnail" />
-        <a id="videoLink" download>
-          Download Video
-        </a>
-        <a id="audioLink" download>
-          Download Audio
-        </a>
-      </div>
-    </div>
-    <div class="message" id="videoMessage">
-      <p></p>
-    </div>
-    <div class="message" id="audioMessage">
-      <p></p>
-    </div>
-  </div>
-  <footer>
-    <p>
-      Made with <span>&hearts;</span> by <a href="https://cernetic.cc">Jaka Černetič</a>
-    </p>
-    <p>You can only download videos that are less than 6 MB in size.
-    </p>
-    <p>
-      If you want to download bigger videos, go <a href="https://github.com/jakecernet/YoutubeDownloader">here</a>.
-    </p>
-  </footer>
-  <script src="index.js"></script>
-</body>
-
+	<body>
+		<h1>Youtube Downloader</h1>
+		<div class="container">
+			<form id="downloadForm">
+				<input
+					type="text"
+					placeholder="Enter Youtube URL"
+					id="urlInput" />
+				<div class="buttons">
+					<button type="submit" onclick="downloadAudio(event)">
+						Download Audio
+					</button>
+					<button type="submit" onclick="downloadVideo(event)">
+						Download Video
+					</button>
+				</div>
+			</form>
+			<div class="output">
+				<div class="card">
+					<img alt="thumbnail" id="videoThumbnail" />
+					<a id="videoLink" download> Download Video </a>
+					<a id="audioLink" download> Download Audio </a>
+				</div>
+			</div>
+			<div class="message" id="videoMessage">
+				<p></p>
+			</div>
+			<div class="message" id="audioMessage">
+				<p></p>
+			</div>
+		</div>
+		<footer>
+			<p>
+				Made with <span>&hearts;</span> by
+				<a href="https://cernetic.cc">Jaka Černetič</a>
+			</p>
+			<p>You can only download videos that are less than 6 MB in size.</p>
+			<p>
+				If you want to download bigger videos, go
+				<a href="https://github.com/jakecernet/YoutubeDownloader"
+					>here</a
+				>.
+			</p>
+		</footer>
+		<script src="index.js"></script>
+	</body>
 </html>

@@ -26,10 +26,6 @@ You can only download videos that are smaller than 6 MB. That's because of the V
 
 ## How it works
 
-The project is built using Express.js and vanilla JavaScript.
+The project is built using Express.js and NodeJS.
 It works bi utilizing the [ytdl-core](https://www.npmjs.com/package/ytdl-core) package, using which it downloads the video and audio files from YouTube.
-It then saves the downloaded to cache using the `blob` object and then creates a download link for the user to download the file.
-
-## License
-
-No license. Feel free to use it however you want, just don't claim it as your own.
+It then saves the downloaded file to cache using the `blob` object and then creates a download link for the user to download the file.

@@ -29,3 +29,14 @@ You can only download videos that are smaller than 6 MB. That's because of the V
 The project is built using Express.js and NodeJS.
 It works bi utilizing the [ytdl-core](https://www.npmjs.com/package/ytdl-core) package, using which it downloads the video and audio files from YouTube.
 It then saves the downloaded file to cache using the `blob` object and then creates a download link for the user to download the file.
+
+## Improvements (Dark Theme Redesign)
+
+-   Modern dark UI with accessible contrast & focus states
+-   Unified fetch logic, added `/api/info` endpoint for title/thumbnail prefetch
+-   Reduced duplicate server code via helpers (`getVideoInfo`, `streamSelected`)
+-   Basic validation of YouTube URLs before attempting download
+-   Lightweight status feedback & loading indicator on client
+-   Removed extraneous footer text; simplified layout structure
+-   Added small security headers and caching for static assets
+-   Progressive enhancement: info auto-fetch on blur when URL valid

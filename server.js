@@ -5,137 +5,152 @@ const ytdl = require("ytdl-core");
 const app = express();
 const port = process.env.PORT || 3000;
 
-app.use(express.static(path.join(__dirname, "client")));
+// Basic security / cache headers (small scope)
+app.use((req, res, next) => {
+    res.setHeader("X-Content-Type-Options", "nosniff");
+    res.setHeader("Cache-Control", "public, max-age=300"); // cache static for 5m
+    next();
+});
 
-app.get("/", (req, res) => {
-	res.sendFile(path.join(__dirname, "client", "index.html"));
+app.use(express.static(path.join(__dirname, "client"), { maxAge: "5m" }));
+
+app.get("/", (_req, res) => {
+    res.sendFile(path.join(__dirname, "client", "index.html"));
+});
+
+// Helper: validate & fetch info
+async function getVideoInfo(url) {
+    if (!url) {
+        const err = new Error("Missing URL parameter");
+        err.statusCode = 400;
+        throw err;
+    }
+    if (!ytdl.validateURL(url)) {
+        const err = new Error("Invalid YouTube URL");
+        err.statusCode = 400;
+        throw err;
+    }
+    return ytdl.getInfo(url);
+}
+
+function sanitizeTitle(title) {
+    return title.replace(/[^\w\s.-]/g, "").trim() || "video";
+}
+
+function streamSelected(res, url, info, filter, kindLabel) {
+    const formats = ytdl.filterFormats(info.formats, filter);
+    if (!formats.length) {
+        const err = new Error(`No ${kindLabel} formats available`);
+        err.statusCode = 400;
+        throw err;
+    }
+    const selected = formats[0];
+    const safeTitle = sanitizeTitle(info.videoDetails.title);
+    if (!res.headersSent) {
+        res.setHeader(
+            "Content-Type",
+            selected.mimeType || "application/octet-stream"
+        );
+        res.setHeader(
+            "Content-Disposition",
+            `attachment; filename="${safeTitle}.${selected.container || "bin"}"`
+        );
+    }
+    return ytdl(url, { format: selected });
+}
+
+// Info endpoint for client optimization (title/thumbnail)
+app.get("/api/info", async (req, res) => {
+    try {
+        const { url } = req.query;
+        const info = await getVideoInfo(url);
+        const { title, videoId, lengthSeconds, thumbnails } = info.videoDetails;
+        res.json({
+            title,
+            videoId,
+            lengthSeconds: Number(lengthSeconds),
+            thumbnail:
+                thumbnails?.[thumbnails.length - 1]?.url ||
+                `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`,
+        });
+    } catch (e) {
+        res.status(e.statusCode || 500).json({
+            error: e.message || "Error fetching info",
+        });
+    }
 });
 
 app.get("/download", async (req, res) => {
 	try {
 		const { url } = req.query;
+		const info = await getVideoInfo(url);
 
-		if (!url) {
-			return res.status(400).json({
-				error: "Missing URL parameter",
-				message: "Please enter a YouTube URL.",
-			});
-		}
+		// Prefer progressive (video+audio) formats, highest resolution
+		let progressive = info.formats.filter(f => f.hasVideo && f.hasAudio);
+		// Prefer mp4 if available
+		const mp4Progressive = progressive.filter(f => f.container === "mp4");
+		if (mp4Progressive.length) progressive = mp4Progressive;
 
-		const info = await ytdl.getInfo(url);
-
-		// Get the formats with both video and audio
-		const videoAudioFormats = ytdl.filterFormats(
-			info.formats,
-			"videoandaudio"
+		progressive.sort((a, b) =>
+			(b.height || 0) - (a.height || 0) ||
+			(b.bitrate || 0) - (a.bitrate || 0)
 		);
 
-		if (!videoAudioFormats.length) {
-			return res.status(400).json({
-				error: "No available formats for the provided URL",
-				message: "Video format not available for the provided URL.",
-			});
+		let selected = progressive[0];
+
+		// Fallback: any highest format (may be video-only)
+		if (!selected) {
+			selected = ytdl.chooseFormat(info.formats, { quality: "highest" });
+		}
+		if (!selected) {
+			return res.status(400).json({ error: "No suitable format found" });
 		}
 
-		// Choose the first format that includes both video and audio
-		const selectedFormat = videoAudioFormats[0];
-
-		const videoStream = ytdl(url, { format: selectedFormat });
-
-		// Sanitize the video title for the Content-Disposition header
-		const sanitizedTitle = info.videoDetails.title.replace(
-			/[^\w\s.-]/g,
-			""
-		); // Remove invalid characters
-
-		// Set headers only if the response has not been sent yet.
+		const safeTitle = sanitizeTitle(info.videoDetails.title);
 		if (!res.headersSent) {
+			res.setHeader("Content-Type", selected.mimeType || "application/octet-stream");
 			res.setHeader(
 				"Content-Disposition",
-				`attachment; filename="${sanitizedTitle}.${selectedFormat.container}"`
+				`attachment; filename="${safeTitle}.${selected.container || "bin"}"`
 			);
-			res.setHeader("Content-Type", selectedFormat.mimeType);
 		}
 
-		// Pipe the video stream to the response
-		videoStream.pipe(res);
-
-		// Inform the client that the download is successful
-		res.on("finish", () => {
-			// Send a success message if needed
-			console.log("Download finished successfully");
+		const stream = ytdl(url, { format: selected });
+		stream.on("error", (err) => {
+			if (!res.headersSent) res.status(500);
+			res.end();
+			console.error("Stream error (video max quality):", err.message);
 		});
-	} catch (error) {
-		console.error(error);
-		res.status(500).json({
-			error: "Internal server error",
-			message: "Internal server error occurred.",
-			details: error.message,
+		stream.pipe(res);
+	} catch (e) {
+		console.error("Download error (max quality):", e);
+		res.status(e.statusCode || 500).json({
+			error: e.message || "Download failed",
 		});
 	}
 });
 
-// Add a separate route for downloading audio
-const ffmpeg = require("fluent-ffmpeg");
-
 app.get("/download/audio", async (req, res) => {
-	try {
-		const { url } = req.query;
-
-		if (!url) {
-			return res.status(400).json({
-				error: "Missing URL parameter",
-				message: "Please enter a YouTube URL.",
-			});
-		}
-
-		const info = await ytdl.getInfo(url);
-
-		// Get the formats with audio only
-		const audioFormats = ytdl.filterFormats(info.formats, "audioonly");
-
-		if (!audioFormats.length) {
-			return res.status(400).json({
-				error: "No available audio formats for the provided URL",
-				message: "Audio format not available for the provided URL.",
-			});
-		}
-
-		// Choose the first format that includes audio only
-		const selectedFormat = audioFormats[0];
-
-		const audioStream = ytdl(url, { format: selectedFormat });
-
-		// Sanitize the video title for the Content-Disposition header
-		const sanitizedTitle = info.videoDetails.title.replace(
-			/[^\w\s.-]/g,
-			""
-		); // Remove invalid characters
-
-		// Set headers
-		res.attachment(`${sanitizedTitle}.${selectedFormat.container}`);
-		res.setHeader("Content-Type", selectedFormat.mimeType);
-
-		// Pipe the audio stream directly to the response
-		audioStream.pipe(res);
-
-		// Inform the client that the download is successful
-		res.on("finish", () => {
-			// Send a success message if needed
-			console.log("Download finished successfully");
-		});
-	} catch (error) {
-		console.error("Error during audio download:", error);
-		res.status(500).json({
-			error: "Internal server error",
-			message: "Internal server error occurred during audio download.",
-			details: error.message,
-		});
-	}
+    try {
+        const { url } = req.query;
+        const info = await getVideoInfo(url);
+        const stream = streamSelected(res, url, info, "audioonly", "audio");
+        stream.on("error", (err) => {
+            if (!res.headersSent) res.status(500);
+            res.end();
+            console.error("Stream error (audio):", err.message);
+        });
+        stream.pipe(res);
+    } catch (e) {
+        console.error("Audio download error:", e);
+        res.status(e.statusCode || 500).json({
+            error: e.message || "Audio download failed",
+        });
+    }
 });
 
 app.listen(port, () => {
-	console.log(`Server is running at http://localhost:${port}`);
+    console.log(`Server running: http://localhost:${port}`);
 });
 
 module.exports = app;
